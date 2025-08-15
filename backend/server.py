@@ -31,6 +31,7 @@ def get_recipes():
 
         response = requests.get(url)
         response.raise_for_status()
+        
         api_data = response.json()
 
         return jsonify(api_data)
