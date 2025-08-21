@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import { useRouter } from 'expo-router';
 import '../global.css'
 
 export default function Ingredients({ navigation }) {
@@ -16,6 +17,7 @@ export default function Ingredients({ navigation }) {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [cart, setCart] = useState([]);
+  const router = useRouter();
 
   const searchIngredients = async () => {
     if (!query.trim()) return;
@@ -47,17 +49,18 @@ export default function Ingredients({ navigation }) {
   };
 
   const goToRecipes = () => {
-    // navigate to recipes screen with selected ingredients
-    navigation.navigate("Recipes", { ingredients: cart });
+    router.push({
+      pathname: "/Recipes",
+      params: { ingredients: JSON.stringify(cart) },
+    });
   };
 
   return (
     <View className="flex-1 bg-white p-4">
       <Text className="text-2xl font-bold text-center mb-4">
-        Add ingredients to your cart!
+        Find ingredients for your recipe!
       </Text>
 
-      {/* Search */}
       <TextInput
         className="border border-gray-300 rounded px-3 py-2 mb-3"
         placeholder="Search ingredients e.g. apple"
@@ -69,7 +72,6 @@ export default function Ingredients({ navigation }) {
 
       {loading && <ActivityIndicator size="small" className="my-2" />}
 
-      {/* Search results */}
       <FlatList
         data={results}
         keyExtractor={(item) => item.id.toString()}
@@ -94,11 +96,11 @@ export default function Ingredients({ navigation }) {
       {cart.length > 0 && (
         <View className="border-t border-gray-200 mt-4 pt-2">
           <Text className="text-lg font-bold mb-2">Your Cart:</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View className="flex-row flex-wrap">
             {cart.map((item) => (
               <View
                 key={item.id}
-                className="flex-row items-center bg-gray-100 rounded-full px-3 py-1 mr-2"
+                className="flex-row items-center bg-gray-100 rounded-full px-3 py-1 mr-2 mb-2"
               >
                 <Image
                   source={{
@@ -112,9 +114,11 @@ export default function Ingredients({ navigation }) {
                 </TouchableOpacity>
               </View>
             ))}
-          </ScrollView>
+          </View>
         </View>
       )}
+
+     
 
       {cart.length > 0 && (
         <TouchableOpacity

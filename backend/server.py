@@ -16,7 +16,7 @@ if not SPOONACULAR_API_KEY:
     raise ValueError("Missing Spoonacular API key in .env file!")
 
 @app.route("/getIngredients", methods=["POST"])
-def get_recipes():
+def get_ingredients():
     try:
         data = request.get_json()
         if not data or "query" not in data:
@@ -41,6 +41,37 @@ def get_recipes():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/getRecipes", methods=["POST"])
+def get_recipes():
+    try: 
+        data = request.get_json()
+
+        if not data or "ingredients" not in data:
+            return jsonify({"error": "Missing 'ingredients' in request body"}), 400
+
+        ingredients = data["ingredients"]
+
+        print(ingredients)
+        if isinstance(ingredients, list):
+            ingredients = ",".join(ingredients)
+
+        print(ingredients)
+        url = (
+            "https://api.spoonacular.com/recipes/findByIngredients"
+            f"?ingredients={ingredients}&number=10&apiKey={SPOONACULAR_API_KEY}"
+        )
+
+        response = requests.get(url)
+        response.raise_for_status()
+        
+        api_data = response.json()
+
+        return jsonify(api_data)
+
+    except requests.RequestException as e:
+        return jsonify({"error": "Error calling Spoonacular API", "details": str(e)}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -17,6 +17,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Ingredients" component={IngredientsScreen} />
+        <Stack.Screen name="Recipes" component={IngredientsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
